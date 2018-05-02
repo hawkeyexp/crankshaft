@@ -8,8 +8,9 @@ source /boot/crankshaft/crankshaft_env.sh
 DEV_FILE=/etc/dev_mode_enabled
 
 enable_dev_mode() {
-	systemctl disable autoapp.service
 	systemctl disable splashscreen.service
+        /usr/bin/fbi -d /dev/fb0 -T 1 --noverbose -a /opt/crankshaft/devmode.png
+	systemctl disable autoapp.service
 	if ! [ -f /etc/crankshaft_ssh_keys_generated ]; then
             systemctl start regenerate_ssh_host_keys.service
             touch /etc/crankshaft_ssh_keys_generated
@@ -17,7 +18,7 @@ enable_dev_mode() {
 	systemctl enable networking.service
 	systemctl enable dhcpd.service
 	systemctl enable avahi-daemon.service
-	systemctl enable ssh
+	systemctl enable ssh.service
 	systemctl enable ntp.service
 	systemctl enable wpa_supplicant.service
 	/opt/crankshaft/wifi_setup.sh enable
@@ -26,9 +27,10 @@ enable_dev_mode() {
 }
 
 disable_dev_mode() {
+        /usr/bin/fbi -d /dev/fb0 -T 1 --noverbose -a /opt/crankshaft/standard.png
 	systemctl enable autoapp.service
 	systemctl enable splashscreen.service
-	systemctl disable ssh
+	systemctl disable ssh.service
 	systemctl disable avahi-daemon.service
 	systemctl disable dhcpd.service
 	systemctl disable networking.service
